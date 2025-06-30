@@ -1,0 +1,43 @@
+#!/bin/sh
+
+out=""
+
+for battery in /sys/class/power_supply/BAT?*; do
+    capacity=$(cat "$battery/capacity" 2>/dev/null)
+    status_raw=$(cat "$battery/status" 2>/dev/null)
+
+    # Choose icon based on capacity
+    if [ "$capacity" -ge 90 ]; then icon="󰁹"
+    elif [ "$capacity" -ge 80 ]; then icon="󰂂"
+    elif [ "$capacity" -ge 70 ]; then icon="󰂁"
+    elif [ "$capacity" -ge 60 ]; then icon="󰂀"
+    elif [ "$capacity" -ge 50 ]; then icon="󰁿"
+    elif [ "$capacity" -ge 40 ]; then icon="󰁾"
+    elif [ "$capacity" -ge 30 ]; then icon="󰁽"
+    elif [ "$capacity" -ge 20 ]; then icon="󰁼"
+    elif [ "$capacity" -ge 10 ]; then icon="󰁻"
+    else icon="󰁺"
+    fi
+
+    # Determine charging status overlay
+    case "$status_raw" in
+        "Full") status="󰁹" ;;
+        "Charging") status="󰂄" ;;
+        "Discharging") status="$icon" ;;
+        "Not charging") status="$icon" ;; # same icon as discharge
+        "Unknown") status="♻" ;;
+        *) status="?" ;;
+    esac
+
+    # Show warning if discharging and critical
+    warn=""
+    if [ "$status_raw" = "Discharging" ] && [ "$capacity" -le 5 ]; then
+        warn="󰂃"
+    fi
+
+    [ -n "$out" ] && out="$out "
+    out="$out$status$warn$capacity%"
+done
+
+printf "%s\n" "$out"
+

@@ -1,0 +1,36 @@
+wifiicon=""
+ethericon=""
+tunicon=""
+
+# Wi-Fi
+wifi_interface=$(basename /sys/class/net/w* 2>/dev/null | head -n1)
+if [ -n "$wifi_interface" ]; then
+    wifi_state=$(cat /sys/class/net/"$wifi_interface"/operstate 2>/dev/null)
+    if [ "$wifi_state" = "up" ]; then
+        quality=$(grep "$wifi_interface" /proc/net/wireless | awk '{ print int($3 * 100 / 70) }')
+        ssid=$(iwgetid -r)
+        wifiicon="󰖩 ${quality}% ${ssid} "
+    else
+        flags=$(cat /sys/class/net/"$wifi_interface"/flags 2>/dev/null)
+        [ "$flags" = "0x1003" ] && wifiicon="󱚵 "
+    fi
+fi
+
+# Ethernet
+eth_interface=$(basename /sys/class/net/e* 2>/dev/null | head -n1)
+if [ -n "$eth_interface" ]; then
+    eth_state=$(cat /sys/class/net/"$eth_interface"/operstate 2>/dev/null)
+    if [ "$eth_state" = "up" ]; then
+        ethericon="󰈁"
+    else
+        ethericon="󰈂"
+    fi
+fi
+
+# VPN (TUN)
+if ip link show | grep -q '^.*tun[0-9]*:'; then
+    tunicon=" 󰌾"
+fi
+
+printf "%s%s%s\n" "$wifiicon" "$ethericon" "$tunicon"
+

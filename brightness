@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Get current and max brightness
+curr_brightness=$(cat /sys/class/backlight/*/brightness)
+max_brightness=$(cat /sys/class/backlight/*/max_brightness)
+
+# Calculate brightness percentage
+brightness_per=$((100 * curr_brightness / max_brightness))
+
+# Pick icon based on brightness level
+if   [ "$brightness_per" -le 20 ]; then icon="󰃞"
+elif [ "$brightness_per" -le 40 ]; then icon="󰃝"
+elif [ "$brightness_per" -le 60 ]; then icon="󰃟"
+elif [ "$brightness_per" -le 80 ]; then icon="󰃠"
+else icon="󰃠"
+fi
+
+# Output formatted brightness
+echo "$icon ${brightness_per}%"
+

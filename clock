@@ -1,0 +1,8 @@
+#!/bin/sh
+
+hour=$(date '+%H')
+
+# Set icon based on 24-hour format
+# Final output: + 24-hour time
+date "+%d:%m:%Y(%a) %H:%M"
+
