@@ -6,6 +6,6 @@ cp blocks ~/.local/bin/
 add to ~/.bash_profile :
 ```
 export PATH=/home/username/.local/bin/blocks:$PATH
-
 ```
+add scripts that you want to use to dwmblocks config
 
