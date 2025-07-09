@@ -1,0 +1,8 @@
+#!/bin/bash
+song=$(mpc current)
+if [ -n "$song" ]; then
+    echo "🎵 $song"
+else
+    echo ""
+fi
+
